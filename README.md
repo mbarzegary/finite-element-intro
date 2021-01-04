@@ -20,12 +20,12 @@ Here is my selected topics of the book, presented in Jupyter notebook format:
 
 * [5- Variational formulations with finite elements](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/5-%20varform-fe.ipynb)
 
-* [6- Time-dependent variational forms](https://github.com/mbarzegary/finite-element-intro/blob/master/6-femtime.ipynb)
+* [6- Time-dependent variational forms](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/6-femtime.ipynb)
 
 * [7- Variational forms for systems of PDEs](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/7-%20femsys.ipynb)
 
-* [8- Dealing with nonlinearity](https://github.com/mbarzegary/finite-element-intro/blob/master/8-%20nonlin.ipynb)
+* [8- Dealing with nonlinearity](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/8-%20nonlin.ipynb)
 
-* [9- Iterative solvers and preconditioning](https://github.com/mbarzegary/finite-element-intro/blob/master/9-%20cg.ipynb)
+* [9- Iterative solvers and preconditioning](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/9-%20cg.ipynb)
 
 You may decide to clone the repository and explore the notebooks and codes offline (recommended) or view the content online using nbviwer (links above).
