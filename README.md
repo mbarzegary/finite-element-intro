@@ -14,18 +14,26 @@ Here is my selected topics of the book, presented in Jupyter notebook format:
 
 * [2- Function approximation by global functions](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/2-%20approx.ipynb)
 
-* [3- Function approximation by finite elements](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/3-%20approx-fe.ipynb)
+* [3- Function approximation by finite elements](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/3-%20approx-fe.ipynb) \
+[FreeFEM tutorial - function approximation](https://github.com/mbarzegary/finite-element-intro/blob/master/3-FF_func_approx.edp)
 
 * [4- Variational formulations with global basis functions](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/4-%20varform.ipynb)
 
-* [5- Variational formulations with finite elements](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/5-%20varform-fe.ipynb)
+* [5- Variational formulations with finite elements](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/5-%20varform-fe.ipynb) \
+[FreeFEM tutorial - variational formulation and solution of Poisson equation](https://github.com/mbarzegary/finite-element-intro/blob/master/5-FF_poisson.edp)
 
-* [6- Time-dependent variational forms](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/6-femtime.ipynb)
+* [6- Time-dependent variational forms](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/6-femtime.ipynb) \
+[FreeFEM tutorial - time dependent diffusion equation with variable diffusion coefficient](https://github.com/mbarzegary/finite-element-intro/blob/master/6-FF_time_diffusion.edp)
 
-* [7- Variational forms for systems of PDEs](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/7-%20femsys.ipynb)
+* [7- Variational forms for systems of PDEs](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/7-%20femsys.ipynb) \
+[FreeFEM tutorial - Stokes equations for lid cavity problem](https://github.com/mbarzegary/finite-element-intro/blob/master/7-FF_stokes_cavity.edp)
 
-* [8- Dealing with nonlinearity](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/8-%20nonlin.ipynb)
+* [8- Dealing with nonlinearity](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/8-%20nonlin.ipynb) \
+[FreeFEM tutorial - Picard method for nonlinear Poisson equation](https://github.com/mbarzegary/finite-element-intro/blob/master/8-FF_picard.edp) \
+[FreeFEM tutorial - Picard-relaxation for nonlinear Poisson equation](https://github.com/mbarzegary/finite-element-intro/blob/master/8-FF_picard_relaxation.edp) \
+[FreeFEM tutorial - Newton method for nonlinear Poisson equation](https://github.com/mbarzegary/finite-element-intro/blob/master/8-FF_newton.edp)
 
-* [9- Iterative solvers and preconditioning](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/9-%20cg.ipynb)
+* [9- Iterative solvers and preconditioning](https://nbviewer.jupyter.org/github/mbarzegary/finite-element-intro/blob/master/9-%20cg.ipynb) \
+[FreeFEM tutorial - high-performance solution of Poisson equation using PETSc](https://github.com/mbarzegary/finite-element-intro/blob/master/9-FF_preconditioning_hpc.edp)
 
 You may decide to clone the repository and explore the notebooks and codes offline (recommended) or view the content online using nbviwer (links above).
