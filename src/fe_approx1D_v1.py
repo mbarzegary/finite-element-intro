@@ -42,7 +42,7 @@ def mesh2(N_e, d, Omega=[0,1]):
     return vertices, cells, dof_map
     # Not yet used
 
-from Lagrange import Lagrange_polynomial, Lagrange_polynomials
+from .Lagrange import Lagrange_polynomial, Lagrange_polynomials
 
 def phi_r(r, X, d):
     """
@@ -435,4 +435,3 @@ if __name__ == '__main__':
     print(cmd)
     x = sym.Symbol('x')  # needed in eval when expression f contains x
     eval(cmd)
-

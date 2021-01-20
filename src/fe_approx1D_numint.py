@@ -1,9 +1,6 @@
-from fe_approx1D import basis, affine_mapping
+from .fe_approx1D import *
 import sys
-from math import sqrt
-import numpy as np
-import sympy as sym
-import mpmath
+
 """
 This module extends and replaces functions in the module fe_approx1D.
 Two major changes are implemented:
@@ -15,6 +12,8 @@ Two major changes are implemented:
  * numerical integration (Midpoint, Trapezoidal, Simpson
    rules) can be used in the reference cell
 """
+# import scitools.std as plt
+import matplotlib.pyplot as plt
 
 def mesh_uniform(N_e, d, Omega=[0,1], symbolic=False):
     """
@@ -40,8 +39,8 @@ def mesh_uniform(N_e, d, Omega=[0,1], symbolic=False):
     return vertices, cells, dof_map
 
 def element_matrix(phi, Omega_e, symbolic=True, numint=None):
-    n = int(len(phi))
-    A_e = sym.zeros(n,n)
+    n = len(phi)
+    A_e = sym.zeros(n, n)
     X = sym.Symbol('X')
     if symbolic:
         h = sym.Symbol('h')
@@ -51,16 +50,18 @@ def element_matrix(phi, Omega_e, symbolic=True, numint=None):
     if numint is None:
         for r in range(n):
             for s in range(r, n):
-                print((phi[r]))
                 A_e[r,s] = sym.integrate(phi[r]*phi[s]*detJ, (X, -1, 1))
                 A_e[s,r] = A_e[r,s]
     else:
-        # symbolic=False means phi is function
+        #phi = [sym.lambdify([X], phi[r]) for r in range(n)]
+        # Do instead a phi_rj = phi[r].subs(X, Xj) to avoid real numbers
         for r in range(n):
             for s in range(r, n):
                 for j in range(len(numint[0])):
                     Xj, wj = numint[0][j], numint[1][j]
-                    A_e[r,s] += phi[r](Xj)*phi[s](Xj)*detJ*wj
+                    phi_rj = phi[r].subs(X, Xj)
+                    phi_sj = phi[s].subs(X, Xj)
+                    A_e[r,s] += phi_rj*phi_sj*detJ*wj
                 A_e[s,r] = A_e[r,s]
     return A_e
 
@@ -84,9 +85,8 @@ def element_vector(f, phi, Omega_e, symbolic=True, numint=None):
                 # Ensure h is numerical
                 h = Omega_e[1] - Omega_e[0]
                 detJ = h/2
-                f_func = sym.lambdify([X], f, 'mpmath')
-                # phi is function
-                integrand = lambda X: f_func(X)*phi[r](X)*detJ
+                #integrand = sym.lambdify([X], f*phi[r]*detJ, modules='sympy')
+                integrand = sym.lambdify([X], f*phi[r]*detJ, modules="mpmath")
                 #integrand = integrand.subs(sym.pi, np.pi)
                 # integrand may still contain symbols like sym.pi that
                 # prevents numerical evaluation...
@@ -105,7 +105,8 @@ def element_vector(f, phi, Omega_e, symbolic=True, numint=None):
             for j in range(len(numint[0])):
                 Xj, wj = numint[0][j], numint[1][j]
                 fj = f.subs(X, Xj)
-                b_e[r] += fj*phi[r](Xj)*detJ*wj
+                phi_rj = phi[r].subs(X, Xj)
+                b_e[r] += fj*phi_rj*detJ*wj
     return b_e
 
 def exemplify_element_matrix_vector(f, d, symbolic=True, numint=False):
@@ -124,8 +125,8 @@ def exemplify_element_matrix_vector(f, d, symbolic=True, numint=False):
                              symbolic=symbolic, numint=numint)
     except NameError as e:
         raise NameError(integration_msg % e)
-    print(('Element matrix:\n', A_e))
-    print(('Element vector:\n', b_e))
+    print('Element matrix:\n', A_e)
+    print('Element vector:\n', b_e)
 
 
 def assemble(vertices, cells, dof_map, phi, f,
@@ -151,21 +152,7 @@ def assemble(vertices, cells, dof_map, phi, f,
     return A, b
 
 def approximate(f, symbolic=False, d=1, N_e=4, numint=None,
-                Omega=[0, 1], collocation=False, filename='tmp'):
-    """
-    Compute the finite element approximation, using Lagrange
-    elements of degree d, to a symbolic expression f (with x
-    as independent variable) on a domain Omega. N_e is the
-    number of elements.
-    symbolic=True implies symbolic expressions in the
-    calculations, while symbolic=False means numerical
-    computing.
-    numint is the name of the numerical integration rule
-    (Trapezoidal, Simpson, GaussLegendre2, GaussLegendre3,
-    GaussLegendre4, etc.). numint=None implies exact
-    integration.
-    """
-    numint_name = numint  # save name
+                Omega=[0, 1], filename='tmp'):
     if symbolic:
         if numint == 'Trapezoidal':
             numint = [[sym.S(-1), sym.S(1)], [sym.S(1), sym.S(1)]]  # sympy integers
@@ -182,7 +169,7 @@ def approximate(f, symbolic=False, d=1, N_e=4, numint=None,
                       [sym.Rational(5,9), sym.Rational(8,9),
                        sym.Rational(5,9)]]
         elif numint is not None:
-            print(('Numerical rule %s is not supported for symbolic computing' % numint))
+            print('Numerical rule %s is not supported' % numint)
             numint = None
     else:
         if numint == 'Trapezoidal':
@@ -192,18 +179,12 @@ def approximate(f, symbolic=False, d=1, N_e=4, numint=None,
         elif numint == 'Midpoint':
             numint = [[0], [2]]
         elif numint == 'GaussLegendre2':
-            numint = [[-1/sqrt(3), 1/sqrt(3)], [1, 1]]
+            numint = [[-1/np.sqrt(3), 1/np.sqrt(3)], [1, 1]]
         elif numint == 'GaussLegendre3':
-            numint = [[-sqrt(3./5), 0, sqrt(3./5)],
+            numint = [[-np.sqrt(3./5), 0, np.sqrt(3./5)],
                       [5./9, 8./9, 5./9]]
-        elif numint == 'GaussLegendre4':
-            numint = [[-0.86113631, -0.33998104,  0.33998104,  0.86113631],
-                      [ 0.34785485,  0.65214515,  0.65214515,  0.34785485]]
-        elif numint == 'GaussLegendre5':
-            numint = [[-0.90617985, -0.53846931, -0.        ,  0.53846931,  0.90617985],
-                      [ 0.23692689,  0.47862867,  0.56888889,  0.47862867,  0.23692689]]
         elif numint is not None:
-            print(('Numerical rule %s is not supported for numerical computing' % numint))
+            print('Numerical rule %s is not supported' % numint)
             numint = None
 
 
@@ -216,87 +197,88 @@ def approximate(f, symbolic=False, d=1, N_e=4, numint=None,
     # and the degree of the polynomial is len(dof_map[e])-1
     phi = [basis(len(dof_map[e])-1) for e in range(N_e)]
 
-    A, b = assemble(vertices, cells, dof_map, phi, f, symbolic=symbolic, numint=numint)
+    print('phi basis (reference element):\n', phi)
+    A, b = assemble(vertices, cells, dof_map, phi, f,
+                    symbolic=symbolic, numint=numint)
 
-    print(('cells:', cells))
-    print(('vertices:', vertices))
-    print(('dof_map:', dof_map))
-    print(('A:\n', A))
-    print(('b:\n', b))
+    print('cells:', cells)
+    print('vertices:', vertices)
+    print('dof_map:', dof_map)
+    print('A:\n', A)
+    print('b:\n', b)
     #print sym.latex(A, mode='plain')
     #print sym.latex(b, mode='plain')
 
     if symbolic:
         c = A.LUsolve(b)
-        c = np.asarray([c[i,0] for i in range(c.shape[0])])
     else:
         c = np.linalg.solve(A, b)
 
-    print(('c:\n', c))
+    print('c:\n', c)
 
-    x = sym.Symbol('x')
-    f = sym.lambdify([x], f, modules='numpy')
-
-    if collocation and not symbolic:
+    if not symbolic:
         print('Plain interpolation/collocation:')
-        # Should use vertices, but compute all nodes!
-        f_at_vertices = [f(xc) for xc in vertices]
-        print(f_at_vertices)
+        x = sym.Symbol('x')
+        f = sym.lambdify([x], f, modules='numpy')
+        try:
+            f_at_vertices = [f(xc) for xc in vertices]
+            print(f_at_vertices)
+        except Exception as e:
+            print('could not evaluate f numerically:')
+            print(e)
+    # else: nodes are symbolic so f(nodes[i]) only makes sense
+    # in the non-symbolic case
 
-    if filename is not None:
+    if not symbolic:# and filename is not None:
         title = 'P%d, N_e=%d' % (d, N_e)
         if numint is None:
             title += ', exact integration'
         else:
-            title += ', integration: %s' % numint_name
-        x_u, u, _ = u_glob(c, vertices, cells, dof_map,
-                           resolution_per_element=51)
+            title += ', integration: %s' % numint
+        x_u, u = u_glob(np.asarray(c), vertices, cells, dof_map,
+                        resolution_per_element=51)
         x_f = np.linspace(Omega[0], Omega[1], 10001) # mesh for f
-        import scitools.std as plt
         plt.plot(x_u, u, '-',
                  x_f, f(x_f), '--')
         plt.legend(['u', 'f'])
         plt.title(title)
-        plt.savefig(filename + '.pdf')
-        plt.savefig(filename + '.png')
-
+        plt.show()
+        # plt.savefig(filename + '.pdf')
+        # plt.savefig(filename + '.png')
     return c
 
-
-def u_glob(U, cells, vertices, dof_map, resolution_per_element=51):
+def u_glob(U, vertices, cells, dof_map,
+           resolution_per_element=51):
     """
     Compute (x, y) coordinates of a curve y = u(x), where u is a
     finite element function: u(x) = sum_i of U_i*phi_i(x).
-    (The solution of the linear system is in U.)
     Method: Run through each element and compute curve coordinates
     over the element.
-    This function works with cells, vertices, and dof_map.
     """
     x_patches = []
     u_patches = []
-    nodes = {}  # node coordinates (use dict to avoid multiple values)
     for e in range(len(cells)):
-        Omega_e = (vertices[cells[e][0]], vertices[cells[e][-1]])
-        d = len(dof_map[e]) - 1
-        phi = basis(d)
+        Omega_e = [vertices[cells[e][0]], vertices[cells[e][1]]]
+        local_nodes = dof_map[e]
+        d = len(local_nodes) - 1
         X = np.linspace(-1, 1, resolution_per_element)
         x = affine_mapping(X, Omega_e)
         x_patches.append(x)
-        u_cell = 0  # u(x) over this cell
-        for r in range(d+1):
-            i = dof_map[e][r]  # global dof number
-            u_cell += U[i]*phi[r](X)
-        u_patches.append(u_cell)
-        # Compute global coordinates of local nodes,
-        # assuming all dofs corresponds to values at nodes
-        X = np.linspace(-1, 1, d+1)
-        x = affine_mapping(X, Omega_e)
-        for r in range(d+1):
-            nodes[dof_map[e][r]] = x[r]
-    nodes = np.array([nodes[i] for i in sorted(nodes)])
+        u_element = 0
+        for r in range(len(local_nodes)):
+            i = local_nodes[r]  # global node number
+            u_element += U[i]*phi_r(r, X, d)
+        u_patches.append(u_element)
     x = np.concatenate(x_patches)
     u = np.concatenate(u_patches)
-    return x, u, nodes
+    return x, u
 
 if __name__ == '__main__':
-    pass
+    import sys
+    from scitools.misc import function_UI
+    cmd = function_UI(
+        [phi_r, u_glob, element_matrix, element_vector,
+         exemplify_element_matrix_vector, assemble, approximate],
+        sys.argv)
+    x = sym.Symbol('x')  # needed in eval when expression f contains x
+    eval(cmd)

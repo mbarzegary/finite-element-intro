@@ -22,7 +22,7 @@ def mesh_uniform(N_e, d, Omega=[0,1], symbolic=False):
     return nodes, elements
 
 
-from Lagrange import Lagrange_polynomial, Chebyshev_nodes, Lagrange_polynomials
+from .Lagrange import Lagrange_polynomial, Chebyshev_nodes, Lagrange_polynomials
 
 
 def basis(d, point_distribution='uniform', symbolic=True):
@@ -97,7 +97,7 @@ def u_glob(U, elements, nodes, resolution_per_element=51):
         u_element = 0
         for r in range(len(local_nodes)):
             i = local_nodes[r]  # global node number
-            u_element += U[i]*phi[r].evalf(X)
+            u_element += U[i]*phi_r(r, X, d)#phi[r].evalf(X)
         u_patches.append(u_element)
     x = np.concatenate(x_patches)
     u = np.concatenate(u_patches)
