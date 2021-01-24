@@ -2,8 +2,8 @@
 import sys, os, time
 sys.path.insert(
     0, os.path.join(os.pardir, os.pardir, 'approx', 'src-approx'))
-from numint import GaussLegendre, NewtonCotes
-from fe_approx1D_numint import u_glob
+from .numint import GaussLegendre, NewtonCotes
+from .fe_approx1D_numint import u_glob
 
 import sympy as sym
 import numpy as np

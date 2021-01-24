@@ -257,6 +257,7 @@ def u_glob(U, vertices, cells, dof_map,
     """
     x_patches = []
     u_patches = []
+    nodes = {}  # node coordinates (use dict to avoid multiple values)
     for e in range(len(cells)):
         Omega_e = [vertices[cells[e][0]], vertices[cells[e][1]]]
         local_nodes = dof_map[e]
@@ -268,10 +269,12 @@ def u_glob(U, vertices, cells, dof_map,
         for r in range(len(local_nodes)):
             i = local_nodes[r]  # global node number
             u_element += U[i]*phi_r(r, X, d)
+            nodes[dof_map[e][r]] = x[r]
         u_patches.append(u_element)
+    nodes = np.array([nodes[i] for i in sorted(nodes)])
     x = np.concatenate(x_patches)
     u = np.concatenate(u_patches)
-    return x, u
+    return x, u, nodes
 
 if __name__ == '__main__':
     import sys
